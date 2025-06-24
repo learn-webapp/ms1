@@ -25,3 +25,9 @@ jobs:
 
     - name: Build JAR with Maven
       run: mvn clean package -DskipTests
+
+    - name: Upload JAR artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ms1-jar
+        path: target/ms1-0.0.1.jar
