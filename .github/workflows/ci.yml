@@ -17,8 +17,11 @@ jobs:
     - name: Set up Java
       uses: actions/setup-java@v3
       with:
-        java-version: '21'  # or 17 / 11 based on your project
+        java-version: '21'
         distribution: 'temurin'
 
+    - name: Run unit tests with Maven
+      run: mvn test
+
     - name: Build JAR with Maven
-      run: mvn clean package
+      run: mvn clean package -DskipTests
