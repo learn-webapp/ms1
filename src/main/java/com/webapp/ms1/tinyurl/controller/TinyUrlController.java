@@ -13,7 +13,6 @@ public class TinyUrlController {
     @Autowired
     TinyUrlService tinyUrlService;
 
-
     @GetMapping("/test")
     public String testMethod() {
         // create some random url here
