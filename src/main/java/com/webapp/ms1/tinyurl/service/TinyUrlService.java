@@ -7,7 +7,7 @@ public class TinyUrlService {
 
     public String generateTinyUrl(String longUrl) {
         String tinyUrl = "http://tinyurl.com/" + longUrl.hashCode();
-        System.out.println("Generated Tiny URL: " + tinyUrl);
+//        System.out.println("Generated Tiny URL: " + tinyUrl);
         return tinyUrl;
     }
 }

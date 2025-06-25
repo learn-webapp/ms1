@@ -31,7 +31,7 @@ jobs:
       with:
         name: ms1-jar
         path: target/ms1-0.0.1.jar
-        
+
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@v2
       with:
