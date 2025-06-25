@@ -28,7 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
-		<sonar.projectKey>ms1</sonar.projectKey>
+		<sonar.projectKey>learn-webapp_ms1</sonar.projectKey>
 		<sonar.organization>learn-webapp</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
