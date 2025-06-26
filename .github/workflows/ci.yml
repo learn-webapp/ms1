@@ -11,29 +11,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Java
-      uses: actions/setup-java@v3
-      with:
-        java-version: '21'
-        distribution: 'temurin'
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
 
-    - name: Run unit tests with Maven
-      run: mvn test
+      - name: Build, run tests, and generate coverage
+        run: mvn verify
 
-    - name: Build JAR with Maven
-      run: mvn clean package -DskipTests
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ms1-jar
+          path: target/ms1-0.0.1.jar
 
-    - name: Upload JAR artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ms1-jar
-        path: target/ms1-0.0.1.jar
-
-    - name: SonarCloud Scan
-      run: mvn verify sonar:sonar -DskipTests
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: SonarCloud Scan
+        run: mvn sonar:sonar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
