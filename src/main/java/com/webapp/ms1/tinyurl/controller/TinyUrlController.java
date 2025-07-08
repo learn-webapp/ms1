@@ -2,9 +2,11 @@ package com.webapp.ms1.tinyurl.controller;
 
 import com.webapp.ms1.tinyurl.service.TinyUrlService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
@@ -13,17 +15,25 @@ public class TinyUrlController {
 
     private final TinyUrlService tinyUrlService;
 
-    @GetMapping("/test")
-    public String testMethod() {
-        // create some random url here
-        String randomUrl = generateRandomUrl();
-        return tinyUrlService.generateTinyUrl(randomUrl);
+
+    /**
+     * curl -X POST http://localhost:8080/tiny-url -H "Content-Type: text/plain" -d "https://www.example.com"
+     * */
+    @PostMapping()
+    public String createTinyUrl(@RequestBody String longUrl) {
+        return tinyUrlService.generateTinyUrl(longUrl);
     }
 
-    public String generateRandomUrl () {
-        // This method generates a random URL for demonstration purposes
-        String baseUrl = "http://example.com/";
-        String randomPath = java.util.UUID.randomUUID().toString();
-        return baseUrl + randomPath;
+    /**
+     * curl -v -L http://localhost:8080/tiny-url/abc123
+     * */
+
+    // this also shows example how 302 redirect works
+    @GetMapping("/{shortCode}")
+    public ResponseEntity<Void> redirectToLongUrl(@PathVariable String shortCode) {
+        String longUrl = tinyUrlService.getLongUrl(shortCode);
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(longUrl))
+                .build();
     }
 }
