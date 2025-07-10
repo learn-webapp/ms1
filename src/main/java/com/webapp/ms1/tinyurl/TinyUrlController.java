@@ -1,6 +1,5 @@
-package com.webapp.ms1.tinyurl.controller;
+package com.webapp.ms1.tinyurl;
 
-import com.webapp.ms1.tinyurl.service.TinyUrlService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,7 @@ import java.net.URI;
 @RequestMapping("/tiny-url")
 public class TinyUrlController {
 
-    private final TinyUrlService tinyUrlService;
+    private final UrlService urlService;
 
 
     /**
@@ -21,17 +20,16 @@ public class TinyUrlController {
      * */
     @PostMapping()
     public String createTinyUrl(@RequestBody String longUrl) {
-        return tinyUrlService.generateTinyUrl(longUrl);
+        return urlService.generateTinyUrl(longUrl);
     }
 
     /**
      * curl -v -L http://localhost:8080/tiny-url/abc123
      * */
-
     // this also shows example how 302 redirect works
     @GetMapping("/{shortCode}")
     public ResponseEntity<Void> redirectToLongUrl(@PathVariable String shortCode) {
-        String longUrl = tinyUrlService.getLongUrl(shortCode);
+        String longUrl = urlService.getLongUrl(shortCode);
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(longUrl))
                 .build();
