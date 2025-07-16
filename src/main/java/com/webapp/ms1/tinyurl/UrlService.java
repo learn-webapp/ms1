@@ -19,6 +19,9 @@ public class UrlService {
 
     private final UrlRepository urlRepository;
 
+    private static final long SHORT_URL_EXPIRY_SEC = 15 * 60;
+    private static final long ALIAS_LOCK_EXPIRY_SEC = 5 * 60;
+
     public String generateShortCode() {
         long id = idGenerator.nextId();
         return Base62Encoder.encode(id);
@@ -48,9 +51,53 @@ public class UrlService {
             return null; // or throw an exception
         }
         // save into cache
-        redisService.save(shortCode, url.getLongUrl());
+        saveShortUrlInRedis(shortCode, url.getLongUrl(), SHORT_URL_EXPIRY_SEC);
         log.info("Retrieved URL: {}, {}", url.getShortUrl(), url.getLongUrl());
         return url.getLongUrl();
+    }
+
+    public void saveShortUrlInRedis(String shortUrl, String longUrl, long expirySeconds) {
+        String redisShortUrlKey = "shortUrl:" + shortUrl;
+        redisService.save(redisShortUrlKey, longUrl, expirySeconds);
+        log.info("Saved short URL in Redis: {}, {}", shortUrl, longUrl);
+    }
+
+    public boolean saveCustomAlias(String alias, String longUrl) {
+        // first try to take lock in redis
+        String redisKey = "alias:" + alias;
+        boolean lockAcquired = redisService.setIfAbsent(redisKey, longUrl, ALIAS_LOCK_EXPIRY_SEC);
+        if (!lockAcquired) {
+            log.warn("Could not acquire lock for alias: {}", alias);
+            return false; // could not acquire lock
+        }
+        log.info("Acquired lock successfully for alias: {}", alias);
+        // check if key exists in redis
+        if (checkIfUrlExistsInRedis(alias)) {
+            log.info("Alias already exists in Redis: {}", alias);
+            return false;
+        }
+        // check if key exists in dynamodb
+        if (checkIfUrlExistsInDynamoDb(alias)) {
+            log.warn("Alias already exists in DynamoDB: {}", alias);
+            return false;
+        }
+        // save in dynamodb
+        Url url = Url.builder()
+                .shortUrl(alias)
+                .longUrl(longUrl)
+                .createdAt(LocalDateTime.now())
+                .build();
+        urlRepository.save(url);
+        log.info("Saved custom alias: {}, long URL: {}", alias, longUrl);
+        return true;
+    }
+
+    public boolean checkIfUrlExistsInRedis(String shortUrl) {
+        return redisService.getString(shortUrl) != null;
+    }
+
+    public boolean checkIfUrlExistsInDynamoDb(String shortUrl) {
+        return urlRepository.getUrl(shortUrl) != null;
     }
 }
 
