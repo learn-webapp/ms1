@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -24,10 +26,11 @@ public class UrlService {
 
     public String generateTinyUrl(String longUrl) {
         String shortCode = generateShortCode();
-        urlRepository.save(Url.builder()
+        Url url = Url.builder()
                 .shortUrl(shortCode)
-                .longUrl(longUrl)
-                .build());
+                .longUrl(longUrl).createdAt(LocalDateTime.now())
+                .build();
+        urlRepository.save(url);
         return shortCode;
     }
 
@@ -46,7 +49,7 @@ public class UrlService {
         }
         // save into cache
         redisService.save(shortCode, url.getLongUrl());
-        log.info("Retrieved URL: {}", url);
+        log.info("Retrieved URL: {}, {}", url.getShortUrl(), url.getLongUrl());
         return url.getLongUrl();
     }
 }
