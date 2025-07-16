@@ -7,6 +7,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ public class UrlRepository {
         Map<String, AttributeValue> urlDataMap = new HashMap<>();
         urlDataMap.put("shortUrl", AttributeValue.fromS(url.getShortUrl()));
         urlDataMap.put("longUrl", AttributeValue.fromS(url.getLongUrl()));
+        urlDataMap.put("createdAt", AttributeValue.fromS(url.getCreatedAt().toString()));
         PutItemRequest request = PutItemRequest.builder()
                 .tableName(URL_TABLE)
                 .item(urlDataMap)
@@ -40,6 +42,7 @@ public class UrlRepository {
         return Url.builder()
                 .shortUrl(urlDataMap.get("shortUrl").s())
                 .longUrl(urlDataMap.get("longUrl").s())
+                .createdAt(urlDataMap.get("createdAt") != null ? LocalDateTime.parse(urlDataMap.get("createdAt").s()) : null)
                 .build();
     }
 }
