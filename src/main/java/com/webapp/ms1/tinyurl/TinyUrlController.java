@@ -34,4 +34,17 @@ public class TinyUrlController {
                 .location(URI.create(longUrl))
                 .build();
     }
+
+    /**
+     * curl -X POST http://localhost:8080/tiny-url/alias -H "Content-Type: application/json" -d '{"alias": "myalias", "longUrl": "https://www.example.com"}'
+     * */
+    @PostMapping("/alias")
+    public ResponseEntity<String> saveCustomAlias(@RequestBody CustomAliasRequest request) {
+        boolean success = urlService.saveCustomAlias(request.getAlias(), request.getLongUrl());
+        if (success) {
+            return ResponseEntity.ok("Custom alias saved successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Alias already exists or error occurred");
+        }
+    }
 }
