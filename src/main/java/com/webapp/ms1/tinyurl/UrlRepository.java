@@ -16,6 +16,7 @@ import java.util.Map;
 public class UrlRepository {
 
     private final DynamoDbClient dynamoDbClient;
+
     private static final String URL_TABLE = "url-mapping";
 
     public void save(Url url) {

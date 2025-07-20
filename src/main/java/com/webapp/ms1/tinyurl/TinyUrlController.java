@@ -30,6 +30,10 @@ public class TinyUrlController {
     @GetMapping("/{shortCode}")
     public ResponseEntity<Void> redirectToLongUrl(@PathVariable String shortCode) {
         String longUrl = urlService.getLongUrl(shortCode);
+        // handle if longUrl is null or empty
+        if (longUrl == null || longUrl.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(longUrl))
                 .build();
