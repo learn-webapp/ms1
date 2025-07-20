@@ -38,12 +38,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-		<!--	DynamoDB	-->
-		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>dynamodb</artifactId>
-			<version>2.25.14</version>
-		</dependency>
 		<!--	MongoDB	-->
 <!--		<dependency>-->
 <!--			<groupId>org.springframework.boot</groupId>-->
@@ -74,10 +68,32 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
+
+
+		<!--	DynamoDB	-->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>dynamodb</artifactId>
+			<version>2.25.14</version>
+		</dependency>
+        <!--  aws sqs  -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>sqs</artifactId>
+			<version>2.25.14</version>
+		</dependency>
+
+
+
 		<dependency>
 			<groupId>com.logtail</groupId>
 			<artifactId>logback-logtail</artifactId>
 			<version>0.3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.13.1</version>
 		</dependency>
 	</dependencies>
 	<build>

@@ -1,11 +1,15 @@
 package com.webapp.ms1.tinyurl;
 
 import com.webapp.ms1.redis.RedisService;
+import com.webapp.ms1.sqs.QueueService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.sqs.model.Message;
 
 import java.time.LocalDateTime;
+
+import static com.webapp.ms1.json.JsonConfig.GSON;
 
 @Slf4j
 @Service
@@ -19,8 +23,10 @@ public class UrlService {
 
     private final UrlRepository urlRepository;
 
-    private static final long SHORT_URL_EXPIRY_SEC = 15 * 60;
-    private static final long ALIAS_LOCK_EXPIRY_SEC = 5 * 60;
+    private final QueueService queueService;
+
+    private static final long SHORT_URL_EXPIRY_SEC = 15 * 60; // 15 minutes
+    private static final long ALIAS_LOCK_EXPIRY_SEC = 15 * 60; // 15 minutes
 
     public String generateShortCode() {
         long id = idGenerator.nextId();
@@ -31,15 +37,19 @@ public class UrlService {
         String shortCode = generateShortCode();
         Url url = Url.builder()
                 .shortUrl(shortCode)
-                .longUrl(longUrl).createdAt(LocalDateTime.now())
+                .longUrl(longUrl)
+                .createdAt(LocalDateTime.now())
                 .build();
-        urlRepository.save(url);
+        // save into redis cache
+        saveShortUrlInRedis(shortCode, longUrl, SHORT_URL_EXPIRY_SEC);
+        // push message to SQS queue
+        queueService.sendMessage(GSON.toJson(url));
         return shortCode;
     }
 
     public String getLongUrl(String shortCode) {
         // first find it in redis cache
-        String longUrl = redisService.getString(shortCode);
+        String longUrl = getLongUrlFromRedis(shortCode);
         if (longUrl != null) {
             log.info("Found long URL in cache: {}", longUrl);
             return longUrl;
@@ -56,8 +66,18 @@ public class UrlService {
         return url.getLongUrl();
     }
 
+
+    public String createShortUrlRedisKey(String shortCode) {
+        return "shortUrl:" + shortCode;
+    }
+
+    public String getLongUrlFromRedis(String shortCode) {
+        String shortUrlKey = createShortUrlRedisKey(shortCode);
+        return redisService.getString(shortUrlKey);
+    }
+
     public void saveShortUrlInRedis(String shortUrl, String longUrl, long expirySeconds) {
-        String redisShortUrlKey = "shortUrl:" + shortUrl;
+        String redisShortUrlKey = createShortUrlRedisKey(shortUrl);
         redisService.save(redisShortUrlKey, longUrl, expirySeconds);
         log.info("Saved short URL in Redis: {}, {}", shortUrl, longUrl);
     }
@@ -87,7 +107,10 @@ public class UrlService {
                 .longUrl(longUrl)
                 .createdAt(LocalDateTime.now())
                 .build();
-        urlRepository.save(url);
+        // save into redis cache
+        saveShortUrlInRedis(alias, longUrl, SHORT_URL_EXPIRY_SEC);
+        // push message to SQS queue
+        queueService.sendMessage(GSON.toJson(url));
         log.info("Saved custom alias: {}, long URL: {}", alias, longUrl);
         return true;
     }
@@ -98,6 +121,13 @@ public class UrlService {
 
     public boolean checkIfUrlExistsInDynamoDb(String shortUrl) {
         return urlRepository.getUrl(shortUrl) != null;
+    }
+
+    public void processQueueMessage(Message message) {
+        Url url = GSON.fromJson(message.body(), Url.class);
+        // save in dynamodb
+        urlRepository.save(url);
+        log.info("Saved short URL: {}, long URL: {}", url.getShortUrl(), url.getLongUrl());
     }
 }
 
