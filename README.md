@@ -2,9 +2,17 @@
 
 structure and config of application
 
-1. this app connects to redis running locally
-2. this connects to dynamodb instance on AWS
-3. this connects to a SQS on AWS
+1. redis - running locally
+2. dynamodb instance on AWS
+3. SQS on AWS
+
+yet to be added :
+elasticsearch
+kafka
+rds/postgres
+cdn
+s3
+lambda
 
 
 // short url working
