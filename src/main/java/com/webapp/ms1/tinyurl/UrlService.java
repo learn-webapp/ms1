@@ -101,7 +101,6 @@ public class UrlService {
             log.warn("Alias already exists in DynamoDB: {}", alias);
             return false;
         }
-        // save in dynamodb
         Url url = Url.builder()
                 .shortUrl(alias)
                 .longUrl(longUrl)
