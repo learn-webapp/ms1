@@ -46,7 +46,7 @@ public class TinyUrlController {
     public ResponseEntity<String> saveCustomAlias(@RequestBody CustomAliasRequest request) {
         boolean success = urlService.saveCustomAlias(request.getAlias(), request.getLongUrl());
         if (success) {
-            return ResponseEntity.ok("Custom alias saved successfully");
+            return ResponseEntity.ok("Custom alias saved successfully.");
         } else {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Alias already exists or error occurred");
         }

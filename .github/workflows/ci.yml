@@ -35,14 +35,26 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - name: Set Docker image tag using commit SHA
-        run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
 
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up image tag
+        id: vars
+        run: echo "TAG=${GITHUB_SHA}" >> $GITHUB_ENV
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/app-ms1:${{ env.IMAGE_TAG }} .
+        run: |
+          docker build -t app-ms1:$TAG .
+          docker tag app-ms1:$TAG 723626972680.dkr.ecr.ap-south-1.amazonaws.com/app-ms1:$TAG
 
-      - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/app-ms1:${{ env.IMAGE_TAG }}
+      - name: Push Docker image to Amazon ECR
+        run: |
+          docker push 723626972680.dkr.ecr.ap-south-1.amazonaws.com/app-ms1:$TAG
