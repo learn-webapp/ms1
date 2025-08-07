@@ -23,3 +23,9 @@ uses SQS for processing messages: while creating short url, message is sent to S
 // working for alias
 first take lock in redis to avoid concurrent processing of same alias, then check if alias exists in DynamoDB/Redis, 
 if not then create new alias and save it in DynamoDB, then release the lock
+
+Steps to build and push docker image:
+1. build new docker image using 
+         "docker build -t coderraghvendra/app-ms1:v1.1.3 ."
+2. push docker image
+         "docker push coderraghvendra/app-ms1:v1.1.3"
