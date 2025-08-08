@@ -16,7 +16,7 @@ public class TinyUrlApiTester {
     private final RestTemplate restTemplate = new RestTemplate();
 
     // runs every 5 minutes
-    @Scheduled(fixedRate = 300000)
+//    @Scheduled(fixedRate = 300000)
     public void testTinyUrlApis() {
         try {
             // Step 1: Generate dummy long URL
