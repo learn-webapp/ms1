@@ -15,7 +15,7 @@ public class QueueService {
 
     private final SqsClient sqsClient;
 
-    private static final String QUEUE_URL = "https://sqs.ap-south-1.amazonaws.com/211125360872/shortUrlQueue";
+    private static final String QUEUE_URL = "https://sqs.ap-south-1.amazonaws.com/723626972680/shortUrlQueue";
 
     public void sendMessage(String messageBody) {
         SendMessageRequest request = SendMessageRequest.builder()

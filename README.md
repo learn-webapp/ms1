@@ -13,6 +13,9 @@ rds/postgres
 cdn
 s3
 lambda
+zk
+flink
+timeseries DB
 
 
 // short url working
