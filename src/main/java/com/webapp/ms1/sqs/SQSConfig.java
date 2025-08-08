@@ -13,7 +13,7 @@ public class SQSConfig {
     public SqsClient sqsClient() {
         return SqsClient.builder()
                 .region(Region.AP_SOUTH_1)
-                .credentialsProvider(DefaultCredentialsProvider.create())
+//                .credentialsProvider(DefaultCredentialsProvider.create())
                 .build();
     }
 }

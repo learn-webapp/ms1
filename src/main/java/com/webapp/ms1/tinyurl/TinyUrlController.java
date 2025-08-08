@@ -1,5 +1,6 @@
 package com.webapp.ms1.tinyurl;
 
+import com.webapp.ms1.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import java.net.URI;
 public class TinyUrlController {
 
     private final UrlService urlService;
-
+    private final RedisService redisService;
 
     /**
      * curl -X POST http://localhost:8080/tiny-url -H "Content-Type: text/plain" -d "https://www.example.com"
@@ -51,4 +52,16 @@ public class TinyUrlController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Alias already exists or error occurred");
         }
     }
+
+    // create api to check if redis is connected
+    @GetMapping("/redis/connected")
+    public ResponseEntity<String> checkRedisConnection() {
+        boolean isConnected = redisService.isRedisConnected();
+        if (isConnected) {
+            return ResponseEntity.ok("Redis is connected.");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Redis connection failed.");
+        }
+    }
+
 }

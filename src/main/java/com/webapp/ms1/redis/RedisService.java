@@ -1,9 +1,11 @@
 package com.webapp.ms1.redis;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class RedisService {
 
@@ -34,5 +36,15 @@ public class RedisService {
     public boolean setIfAbsent(String key, Object value, long expirySeconds) {
         Boolean result = redisTemplate.opsForValue().setIfAbsent(key, value, expirySeconds, java.util.concurrent.TimeUnit.SECONDS);
         return result != null && result;
+    }
+
+    // write method to check redis connection
+    public boolean isRedisConnected() {
+        try {
+            return redisTemplate.getConnectionFactory().getConnection().ping() != null;
+        } catch (Exception e) {
+            log.error("Redis connection error: {}", e.getMessage());
+            return false;
+        }
     }
 }
