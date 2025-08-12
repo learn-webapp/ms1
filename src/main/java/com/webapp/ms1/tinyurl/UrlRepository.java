@@ -1,5 +1,6 @@
 package com.webapp.ms1.tinyurl;
 
+import com.webapp.ms1.config.AppConfig;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -15,8 +16,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class UrlRepository {
 
-    private final DynamoDbClient dynamoDbClient;
-
     private static final String URL_TABLE = "url-mapping";
 
     public void save(Url url) {
@@ -28,7 +27,7 @@ public class UrlRepository {
                 .tableName(URL_TABLE)
                 .item(urlDataMap)
                 .build();
-        dynamoDbClient.putItem(request);
+        AppConfig.getDynamoDbClient().putItem(request);
     }
 
     public Url getUrl(String shortUrl) {
@@ -37,7 +36,7 @@ public class UrlRepository {
                 .key(Map.of("shortUrl", AttributeValue.fromS(shortUrl)))
                 .build();
 
-        Map<String, AttributeValue> urlDataMap = dynamoDbClient.getItem(request).item();
+        Map<String, AttributeValue> urlDataMap = AppConfig.getDynamoDbClient().getItem(request).item();
         if (urlDataMap == null || urlDataMap.isEmpty()) return null;
 
         return Url.builder()

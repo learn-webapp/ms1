@@ -32,6 +32,7 @@
 		<sonar.organization>learn-webapp</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+		<aws.sdk.version>2.32.19</aws.sdk.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -69,21 +70,44 @@
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 
-
-		<!--	DynamoDB	-->
+		<!--  AWS Secrets manager  -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>secretsmanager</artifactId>
+			<version>${aws.sdk.version}</version>
+		</dependency>
+		<!--	AWS DynamoDB	-->
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>dynamodb</artifactId>
-			<version>2.25.14</version>
+			<version>${aws.sdk.version}</version>
 		</dependency>
-        <!--  aws sqs  -->
+        <!--  AWS SQS  -->
 		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>sqs</artifactId>
-			<version>2.25.14</version>
+			<version>${aws.sdk.version}</version>
+		</dependency>
+		<!--	AWS S3	-->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>${aws.sdk.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
+		<!--	Kafka client	-->
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-clients</artifactId>
+			<version>4.0.0</version>
+		</dependency>
 
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka-streams</artifactId>
+			<version>3.7.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.logtail</groupId>

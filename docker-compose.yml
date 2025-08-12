@@ -70,6 +70,43 @@ services:
     environment:
       KAFKA_BROKERS: my-kafka:9092
 
+  jobmanager:
+    image: flink:1.19.1-scala_2.12
+    container_name: flink-jobmanager
+    ports:
+      - "8081:8081"   # Flink Web UI
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        rest.port: 8081
+    command: jobmanager
+    volumes:
+      - ./jars:/opt/flink/usrlib
+
+  taskmanager:
+    image: flink:1.19.1-scala_2.12
+    container_name: flink-taskmanager
+    depends_on:
+      - jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 2
+    command: taskmanager
+    volumes:
+      - ./jars:/opt/flink/usrlib
+
+  # Optional: an interactive SQL Client attached to the cluster
+  sql-client:
+    image: flink:1.19.1-scala_2.12
+    container_name: flink-sql-client
+    depends_on:
+      - jobmanager
+    entrypoint: ["/bin/bash", "-lc", "/opt/flink/bin/sql-client.sh"]
+
+
 volumes:
   postgres_data:
   redis_data:

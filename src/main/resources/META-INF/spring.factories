@@ -1,0 +1,1 @@
+org.springframework.context.ApplicationListener=com.webapp.ms1.config.ApplicationPropertiesListener

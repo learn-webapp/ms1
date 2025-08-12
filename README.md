@@ -2,16 +2,17 @@
 
 structure and config of application
 
-1. redis - running locally
-2. dynamodb instance on AWS
-3. SQS on AWS
+1. redis - running locally (required to run locally before application start)
+   connect to local redis using : ```docker exec -it my-redis redis-cli```
+2. dynamodb instance on AWS (always running on AWS)
+3. SQS on AWS (always running on AWS)
 
 yet to be added :
 elasticsearch
 kafka
 rds/postgres
 cdn
-s3
+**s3
 lambda
 zk
 flink
