@@ -8,7 +8,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 //@SpringBootApplication
 @EnableScheduling
-@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class, MongoAutoConfiguration.class})
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class})
+//@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class, MongoAutoConfiguration.class})
 public class Ms1Application {
 
 	public static void main(String[] args) {

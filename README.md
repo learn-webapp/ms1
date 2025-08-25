@@ -6,6 +6,9 @@ structure and config of application
    connect to local redis using : ```docker exec -it my-redis redis-cli```
 2. dynamodb instance on AWS (always running on AWS)
 3. SQS on AWS (always running on AWS)
+4. MongoDB - connects with cluster running on cloud.mongodb.com
+   to connect, you have add password in connection string in application.properties file, password is stored in 
+   local-settings-info.txt file on local system
 
 yet to be added :
 elasticsearch
